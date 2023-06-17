@@ -1,3 +1,4 @@
+#!/usr/bin/
 # write python code to create synthetic college transcript table with about 30 courses per student,
 # and about 4 courses a term, with a single student course per row, and unique student ID for each student,
 # and a second table that contains graduating majors and synthetic ACT scores, and first and last terms.
@@ -7,7 +8,7 @@
 # and a second table that contains graduating majors and synthetic ACT scores, and first and last terms.
 #
 
-
+# will this run?
 # create a student class
 class Student:
     def __init__(self):
