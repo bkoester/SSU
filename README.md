@@ -1,3 +1,5 @@
+[![Python package](https://github.com/bkoester/SSU/actions/workflows/python-aws.yml/badge.svg)](https://github.com/bkoester/SSU/actions/workflows/python-aws.yml)
+
 # SSU
 synthetic student transcripts
 
