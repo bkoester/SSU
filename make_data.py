@@ -61,10 +61,12 @@ class Course:
 
         # remove course from the courses vector if the course
         # is in the omit_previous_courses vector
-        course_names = [x for x in course_models['course'] if x not in omit_previous_courses]
+        course_names = [x for x in course_models['course']
+                        if x not in omit_previous_courses]
 
         course_title = course_names[random.randint(0,len(course_names)-1)]
-        index = course_models.index[course_models['course'] == course_title].tolist()[0]
+        index = course_models.index[course_models['course'] ==
+                                    course_title].tolist()[0]
         grade_interp = (course_models['coeff1'][index] +
                        course_models['coeff2'][index]*hsgpa +
                        course_models['coeff3'][index]*hsgpa**2)
@@ -88,7 +90,8 @@ def course_grade_function():
 
     #create a dataframe of courses and their grade functions
     # that will be filled in the loop
-    df_cmodel = pd.DataFrame(columns=['course','form','coeff1','coeff2','coeff3'])
+    df_cmodel = pd.DataFrame(columns=
+                             ['course','form','coeff1','coeff2','coeff3'])
 
     for course in courses:
         # randomly select a functional form for the grade vs. GPA curve
@@ -105,12 +108,15 @@ def course_grade_function():
             coeff3 = random.randint(1,5)/10.
 
         # add the course and the grade function to the dataframe
-        df_cmodel = df_cmodel.append({'course':course,'form':form,'coeff1':coeff1,
-                        'coeff2':coeff2,'coeff3':coeff3},ignore_index=True)
+        df_cmodel = df_cmodel.append({'course':course,
+                                      'form':form,'coeff1':coeff1,
+                                      'coeff2':coeff2,'coeff3':coeff3},
+                                      ignore_index=True)
     return df_cmodel
 
 
-# create a class that uses the assigns a major for every term in the course table
+# create a class that uses the assigns a major for
+# every term in the course table
 class Major:
     """Class representing a major"""
     def __init__(self,student_id,term):
