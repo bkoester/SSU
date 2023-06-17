@@ -128,5 +128,10 @@ def create_student_struct(N):
 
     df_majors = pd.DataFrame([vars(m) for m in majors])
 
-    return df_students,df_courses,df_majors
+    home = '/home/ec2-user/environment/'
+    df_students.to_csv(home+"students.csv")
+    df_courses.to_csv(home+"courses.csv")
+    df_majors.to_csv(home+"majors.csv")
+    
+    #return df_students,df_courses,df_majors
 
