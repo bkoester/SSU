@@ -93,7 +93,8 @@ def course_grade_function():
 
     courses = course_list()
 
-    #create a dataframe of courses and their grade functions that will be filled in the loop
+    #create a dataframe of courses and their grade functions 
+    # that will be filled in the loop
     df_cmodel = pd.DataFrame(columns=['course','form','coeff1','coeff2','coeff3'])
 
     for course in courses:
