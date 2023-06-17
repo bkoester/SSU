@@ -14,7 +14,7 @@ class Student:
     def __init__(self):
         import random
         gint = ['g1', 'g2']
-        eth = ['white', 'black', 'hispanic', 'asian', 'other']
+        eth = ['white', 'black', 'hispanic', 'asian', 'other','twoplus']
         majors = ['CS', 'BIO', 'MATH', 'PHYS', 'CHEM', 'ECON', 'ENG', 'HIST', 'POLI', 'PSYC', 'SOC', 'OTHER']
         self.student_id = random.randint(1,100)
         self.gender = random.choice(gint)
