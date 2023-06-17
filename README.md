@@ -9,5 +9,5 @@ synthetic student transcripts
 4. Clone this repo
 5. Run Makefile
 6. In the python shell
-    >>> import make_data as md
-    >>> std,crse,term = md.create_student_struct(10) 
+     - `import make_data as md`
+     - `std,crse,term = md.create_student_struct(10)` 
