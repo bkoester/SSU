@@ -8,6 +8,8 @@ def test_dummy():
     '''Create a test files, make sure they look ok, then delete them'''
 
     write_path='.tmp/'
+
+    os.mkdir(write_path)
     md.create_student_struct(100, write_path)
 
     #assert that the files were made
@@ -35,3 +37,4 @@ def test_dummy():
     os.remove('.tmp/students.csv')
     os.remove('.tmp/courses.csv')
     os.remove('.tmp/majors.csv')
+    os.rmdir(write_path)
