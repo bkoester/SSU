@@ -1,6 +1,6 @@
 exceptiongroup==1.1.1
 iniconfig==2.0.0
-numpy==1.24.3
+numpy==1.21.6
 packaging==23.1
 pandas==2.0.2
 pluggy==1.0.0
