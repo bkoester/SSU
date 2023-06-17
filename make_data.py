@@ -7,6 +7,7 @@
 # and a second table that contains graduating majors and synthetic ACT scores, and first and last terms.
 #
 
+
 # create a student class
 class Student:
     def __init__(self):
@@ -135,3 +136,5 @@ def create_student_struct(N):
     
     #return df_students,df_courses,df_majors
 
+if __name__ == '__main__':
+    create_student_struct(10)
