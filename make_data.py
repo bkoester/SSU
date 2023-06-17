@@ -13,10 +13,10 @@
 # and a second table that contains graduating majors and
 # synthetic ACT scores, and first and last terms.
 #
-
 # will this run?
 # create a student class
 
+import sys
 import random
 import numpy as np
 import pandas as pd
@@ -93,7 +93,7 @@ def course_grade_function():
 
     courses = course_list()
 
-    #create a dataframe of courses and their grade functions 
+    #create a dataframe of courses and their grade functions
     # that will be filled in the loop
     df_cmodel = pd.DataFrame(columns=['course','form','coeff1','coeff2','coeff3'])
 
@@ -134,7 +134,7 @@ class Major:
 #assign courses to students, then write out a dataframe
 # of coures taken by each student
 
-def create_student_struct(n_student):
+def create_student_struct(n_student,write_path):
     '''The main function that creates the student data structures'''
     # create a data frame of students and
     # another dataframe
@@ -191,13 +191,13 @@ def create_student_struct(n_student):
 
     df_majors = pd.DataFrame([vars(m) for m in majors])
 
-    home = '/home/ec2-user/environment/'
-    df_students.to_csv(home+"students.csv")
-    df_courses.to_csv(home+"courses.csv")
-    df_majors.to_csv(home+"majors.csv")
+    # write out the dataframes to csv files in the home directory
+    #home = '~/' #/home/ec2-user/environment/'
+    df_students.to_csv(write_path+"students.csv")
+    df_courses.to_csv(write_path+"courses.csv")
+    df_majors.to_csv(write_path+"majors.csv")
     #return df_students,df_courses,df_majors
 
 # this is needed to run the script from the command line
 if __name__ == '__main__':
-
-    create_student_struct(10)
+    create_student_struct(int(sys.argv[1]),sys.argv[2])
