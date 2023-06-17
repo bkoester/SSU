@@ -1,4 +1,5 @@
-#!/usr/bin/
+#!/usr/bin/env/python
+
 # write python code to create synthetic college transcript table with about 30 courses per student,
 # and about 4 courses a term, with a single student course per row, and unique student ID for each student,
 # and a second table that contains graduating majors and synthetic ACT scores, and first and last terms.
@@ -29,6 +30,14 @@ class Student:
         self.courses.append(course)
 
 
+def course_list():
+    courses = ['MATH 100','MATH 200','MATH 300','MATH 400','MATH 500',
+                   'CHEM 100', 'CHEM 200', 'CHEM 300', 'CHEM 400', 'CHEM 500',
+                    'PHYS 100','PHYS 200', 'PHYS 300', 'PHYS 400', 'PHYS 500',
+                    'SOC 100', 'SOC 200', 'SOC 300', 'SOC 400', 'SOC 500',
+                    'HIST 100', 'HIST 200', 'HIST 300', 'HIST 400', 'HIST 500']
+    return courses
+
 class Course:
     def __init__(self,student_id,act,term,omit_previous_courses=[]):
         import random
@@ -36,11 +45,7 @@ class Course:
 
         # generate a list of 20 courses to draw from: 10 lower division, 10 upper division,from 5 departments
         # 5 math, 5 science, 5 social science, 5 humanities, 5 other
-        courses = ['MATH 100','MATH 200','MATH 300','MATH 400','MATH 500',
-                   'CHEM 100', 'CHEM 200', 'CHEM 300', 'CHEM 400', 'CHEM 500',
-                    'PHYS 100','PHYS 200', 'PHYS 300', 'PHYS 400', 'PHYS 500',
-                    'SOC 100', 'SOC 200', 'SOC 300', 'SOC 400', 'SOC 500',
-                    'HIST 100', 'HIST 200', 'HIST 300', 'HIST 400', 'HIST 500']
+        courses = course_list()
 
         #remove course from the courses vector if the course is in the omit_previous_courses vector
         courses = [x for x in courses if x not in omit_previous_courses]
@@ -61,6 +66,42 @@ class Course:
         self.credits = random.randint(3,4)
         self.student_id = student_id
         self.term = term
+
+# create a lookup table for courses that includes with a course name, a functional form for predicted grade vs. input GPA 
+# (linear, quadratic), and random coefficients
+# for the functional form. 
+# this should only be run once and saved so that all students in a a course have the same grade function.
+def course_grade_function():
+  
+    import random
+    import numpy as np
+    import pandas as pd
+
+    courses = course_list()
+
+    #create a dataframe of courses and their grade functions that will be filled in the loop
+    df = pd.DataFrame(columns=['course','form','coeff1','coeff2','coeff3'])
+
+    for course in courses:
+        # randomly select a functional form for the grade vs. GPA curve
+        # 0 is linear, 1 is quadratic
+        form = random.randint(1,2)
+
+        # randomly select coefficients for the functional form
+        if form == 1:
+            coeff1 = random.randint(4,14)/10.
+            coeff2 = random.randint(2,9)/10.
+            coeff3 = 0
+        if form == 2:
+            coeff1 = random.randint(4,14)/10
+            coeff2 = random.randint(2,9)/10.
+            coeff3 = random.randint(1,5)/10.
+
+        # add the course and the grade function to the dataframe
+        df = df.append({'course':course,'form':form,'coeff1':coeff1,'coeff2':coeff2,'coeff3':coeff3},ignore_index=True)
+        
+    return df
+
 
 # create a class that uses the assigns a major for every term in the course table
 class Major:
