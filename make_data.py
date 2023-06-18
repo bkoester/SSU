@@ -18,7 +18,6 @@
 
 import sys
 import random
-import numpy as np
 import pandas as pd
 
 class Student:
@@ -35,6 +34,7 @@ class Student:
         self.first_term = random.randint(1, 10)
         self.last_term = random.randint(4, 14) + self.first_term
         self.major = random.choice(majors)
+        self.hsgpa = random.randint(20, 40)/10.
         self.courses = []
 
     def add_course(self, course):
@@ -54,30 +54,25 @@ def course_list():
 
 class Course:
     """Class representing a course"""
-    def __init__(self,student_id,act,term,omit_previous_courses=None):
+    def __init__(self,student_id,hsgpa,term,course_models,omit_previous_courses=None):
         # generate a list of 20 courses to draw from:
         # 10 lower division, 10 upper division,from 5 departments
         # 5 math, 5 science, 5 social science, 5 humanities, 5 other
-        courses = course_list()
 
-        #remove course from the courses vector if the course
+        # remove course from the courses vector if the course
         # is in the omit_previous_courses vector
-        courses = [x for x in courses if x not in omit_previous_courses]
+        course_names = [x for x in course_models['course']
+                        if x not in omit_previous_courses]
 
-        grades = [0,0.7,1.0,1.3,1.7,2.0,2.3,2.7,3.0,3.3,3.7,4.0]
-        # map the act score to an index between 0 and 11 plus gaussian noise,
-        # then use that index to select a grade
-        # from the grades list
-        index = round(np.interp(act, [20, 36], [0, 11])+np.random.normal(0,2))
+        course_title = course_names[random.randint(0,len(course_names)-1)]
+        index = course_models.index[course_models['course'] ==
+                                    course_title].tolist()[0]
+        grade_interp = (course_models['coeff1'][index] +
+                       course_models['coeff2'][index]*hsgpa +
+                       course_models['coeff3'][index]*hsgpa**2)
 
-        if index < 0:
-            index = 0
-        if index > 11:
-            index = 11
-
-        self.grade = grades[index]
-        self.name = random.choice(courses)
-        self.grade = grades[index]
+        self.grade = grade_interp
+        self.name = course_title
         self.credits = random.randint(3,4)
         self.student_id = student_id
         self.term = term
@@ -95,13 +90,13 @@ def course_grade_function():
 
     #create a dataframe of courses and their grade functions
     # that will be filled in the loop
-    df_cmodel = pd.DataFrame(columns=['course','form','coeff1','coeff2','coeff3'])
+    df_cmodel = pd.DataFrame(columns=
+                             ['course','form','coeff1','coeff2','coeff3'])
 
     for course in courses:
         # randomly select a functional form for the grade vs. GPA curve
         # 0 is linear, 1 is quadratic
         form = random.randint(1,2)
-
         # randomly select coefficients for the functional form
         if form == 1:
             coeff1 = random.randint(4,14)/10.
@@ -113,12 +108,15 @@ def course_grade_function():
             coeff3 = random.randint(1,5)/10.
 
         # add the course and the grade function to the dataframe
-        df_cmodel = df_cmodel.append({'course':course,'form':form,'coeff1':coeff1,
-                        'coeff2':coeff2,'coeff3':coeff3},ignore_index=True)
+        df_cmodel = df_cmodel.append({'course':course,
+                                      'form':form,'coeff1':coeff1,
+                                      'coeff2':coeff2,'coeff3':coeff3},
+                                      ignore_index=True)
     return df_cmodel
 
 
-# create a class that uses the assigns a major for every term in the course table
+# create a class that uses the assigns a major for
+# every term in the course table
 class Major:
     """Class representing a major"""
     def __init__(self,student_id,term):
@@ -141,6 +139,8 @@ def create_student_struct(n_student,write_path):
     # of courses taken by each student
     # create a dataframe of students
 
+    course_models = course_grade_function()
+
     students = []
     for i in range(n_student):
         students.append(Student())
@@ -151,7 +151,6 @@ def create_student_struct(n_student,write_path):
     # create a dataframe of courses taken by each student
     courses = []
     for student in students:
-
         # randomly select a number of courses to take each term
         # between 1-4 and let n_crse be the
         # total number of courses each term. create a vector that
@@ -173,8 +172,9 @@ def create_student_struct(n_student,write_path):
             n_crse = 25
 
         for i in range(n_crse):
-            course = Course(student.student_id,student.act,
-                            full_term_vec[i],omit_previous_courses)
+            course = Course(student.student_id,student.hsgpa,
+                            full_term_vec[i],course_models,
+                            omit_previous_courses)
             student.add_course(course)
             courses.append(course)
             omit_previous_courses.append(course.name)
@@ -193,6 +193,11 @@ def create_student_struct(n_student,write_path):
 
     # write out the dataframes to csv files in the home directory
     #home = '~/' #/home/ec2-user/environment/'
+
+    #drop the courses column from df_students
+    df_students = df_students.drop('courses',axis=1)
+
+    #write out the dataframes to csv files
     df_students.to_csv(write_path+"students.csv")
     df_courses.to_csv(write_path+"courses.csv")
     df_majors.to_csv(write_path+"majors.csv")
