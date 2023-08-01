@@ -19,6 +19,7 @@
 import sys
 import random
 import pandas as pd
+import requests
 
 class Student:
     """Class representing a student"""
@@ -197,11 +198,67 @@ def create_student_struct(n_student,write_path):
     #drop the courses column from df_students
     df_students = df_students.drop('courses',axis=1)
 
-    #write out the dataframes to csv files
-    df_students.to_csv(write_path+"students.csv")
-    df_courses.to_csv(write_path+"courses.csv")
-    df_majors.to_csv(write_path+"majors.csv")
+    #now rename the columns to match the database
+    df_students,df_courses,df_majors = rename_columns(df_students,df_courses,df_majors)
+
+
+    #write out the dataframes to csv files but don't write out the index
+    df_students.to_csv(write_path+"students.csv",index=False)
+    df_courses.to_csv(write_path+"courses.csv",index=False)
+    df_majors.to_csv(write_path+"majors.csv",index=False)
     #return df_students,df_courses,df_majors
+
+
+# a function to rename the columns in the dataframe to match the database
+# column names
+def rename_columns(df_students,df_courses,df_majors):
+    '''Function to rename the columns in the dataframes to match the database'''
+    #create a dictionary of old and new column names
+    student_dict = {'student_id':'STDNT_ID',
+                    'gender':'STDNT_SEX_SHORT_DES',
+                    'act':'MAX_ACT_MATH_SCR',
+                    'race':'STDNT_ETHNC_GRP_SHORT_DES',
+                    'first_term': 'FIRST_TERM_ATTND_SHORT_DES',
+                    'last_term': 'LAST_TERM_ATTND_SHORT_DES',
+                    'major':'UM_DGR_1_MAJOR_1_DES',
+                    'hsgpa':'HS_GPA'}
+
+    courses_dict = {'grd':'GRD_PTS_PER_UNIT_NBR',
+                    'name':'CRSE_ID_CD',
+                    'credits':'UNITS_ERND_NBR',
+                    'student_id:':'STDNT_ID',
+                    'term':'TERM_CD'}
+
+    majors_dict = {'major':'UM_DGR_1_MAJOR_1_DES',
+                   'student_id':'STDNT_ID',
+                   'term':'TERM_CD'}
+
+
+    #rename the columns
+    df_students.rename(columns=student_dict,inplace=True)
+    df_courses.rename(columns=courses_dict,inplace=True)
+    df_majors.rename(columns=majors_dict,inplace=True)
+
+    return df_students,df_courses,df_majors
+
+# create a function to read the median income by zipcode from the american
+# community survey data website.
+def fetch_median_incomes():
+    '''Function to fetch the median incomes by zipcode 
+    from the american community survey data website'''
+    base_url = "https://api.census.gov/data/2019/acs/acs5/profile"
+    variables = "DP03_0062E"  # Median Income: DP03_0062E
+    
+    # fetch all the median incomes for all zipcodes in the US
+    incomes = requests.get(f"{base_url}?get={variables}&for=zip%20code%20tabulation%20area:*",timeout=20)
+
+    # add some error handling at some point
+    #convert the json object to a pandas dataframe
+    df_incomes = pd.DataFrame(incomes.json()[1:],columns=incomes.json()[0])
+
+    return df_incomes
+
+
 
 # this is needed to run the script from the command line
 if __name__ == '__main__':
