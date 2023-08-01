@@ -248,9 +248,11 @@ def fetch_median_incomes():
     from the american community survey data website'''
     base_url = "https://api.census.gov/data/2019/acs/acs5/profile"
     variables = "DP03_0062E"  # Median Income: DP03_0062E
-    
+
     # fetch all the median incomes for all zipcodes in the US
-    incomes = requests.get(f"{base_url}?get={variables}&for=zip%20code%20tabulation%20area:*",timeout=20)
+    incomes = requests.get(f"{base_url}?get={variables}&\
+                           for=zip%20code%20tabulation%20area:*",\
+                           timeout=20)
 
     # add some error handling at some point
     #convert the json object to a pandas dataframe
