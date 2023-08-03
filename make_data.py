@@ -71,12 +71,31 @@ class Course:
         grade_interp = (course_models['coeff1'][index] +
                        course_models['coeff2'][index]*hsgpa +
                        course_models['coeff3'][index]*hsgpa**2)
-
+        self.letter = letter_grade(grade_interp)
         self.grade = grade_interp
         self.name = course_title
         self.credits = random.randint(3,4)
         self.student_id = student_id
         self.term = term
+
+# for Course object, create a columns that converts the grade
+# to a letter grade
+def letter_grade(grade):
+    '''Function to convert a grade to a letter grade'''
+    if grade >= 3.5:
+        letter = 'A'
+    elif grade >= 3.0:
+        letter = 'B'
+    elif grade >= 2.5:
+        letter = 'C'
+    elif grade >= 2.0:
+        letter = 'D'
+    elif grade >= 1.0:
+        letter = 'W'
+    else:
+        letter = 'E'
+    return letter
+
 
 # create a lookup table for courses that includes with a
 # course name, a functional form for predicted grade vs. input GPA
@@ -223,10 +242,11 @@ def rename_columns(df_students,df_courses,df_majors):
                     'major':'UM_DGR_1_MAJOR_1_DES',
                     'hsgpa':'HS_GPA'}
 
-    courses_dict = {'grd':'GRD_PTS_PER_UNIT_NBR',
+    courses_dict = {'grade':'GRD_PTS_PER_UNIT_NBR',
+                    'letter':'CRSE_GRD_OFFCL_CD',
                     'name':'CRSE_ID_CD',
                     'credits':'UNITS_ERND_NBR',
-                    'student_id:':'STDNT_ID',
+                    'student_id':'STDNT_ID',
                     'term':'TERM_CD'}
 
     majors_dict = {'major':'UM_DGR_1_MAJOR_1_DES',
