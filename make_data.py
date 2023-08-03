@@ -96,6 +96,31 @@ def letter_grade(grade):
         letter = 'E'
     return letter
 
+# create a function that maps terms to years for Fall and Winter for
+# terms 1-16 up to 2020
+def term_to_year(term):
+    '''Function to map terms to years'''
+    if term <= 3:
+        year = 2016
+    elif term <= 6:
+        year = 2017
+    elif term <= 9:
+        year = 2018
+    elif term <= 12:
+        year = 2019
+    else:
+        year = 2019
+
+    seas = 'FA'
+
+    if term % 2 == 0:
+        seas = 'WN'
+    elif term % 3 == 0:
+        seas = 'SP'
+
+    term_short_des = seas + ' ' + str(year)
+
+    return term_short_des
 
 # create a lookup table for courses that includes with a
 # course name, a functional form for predicted grade vs. input GPA
@@ -211,6 +236,12 @@ def create_student_struct(n_student,write_path):
 
     df_majors = pd.DataFrame([vars(m) for m in majors])
 
+    #now use the term_to_year function to create a term_short_des column
+    df_students['first_term_short_des'] = df_students['first_term'].apply(term_to_year)
+    df_students['last_term_short_des'] = df_students['last_term'].apply(term_to_year)
+    df_courses['term_short_des'] = df_courses['term'].apply(term_to_year)
+    df_majors['term_short_des'] = df_majors['term'].apply(term_to_year)
+
     # write out the dataframes to csv files in the home directory
     #home = '~/' #/home/ec2-user/environment/'
 
@@ -237,8 +268,10 @@ def rename_columns(df_students,df_courses,df_majors):
                     'gender':'STDNT_SEX_SHORT_DES',
                     'act':'MAX_ACT_MATH_SCR',
                     'race':'STDNT_ETHNC_GRP_SHORT_DES',
-                    'first_term': 'FIRST_TERM_ATTND_SHORT_DES',
-                    'last_term': 'LAST_TERM_ATTND_SHORT_DES',
+                    'first_term': 'FIRST_TERM_ATTND_CD',
+                    'last_term': 'LAST_TERM_ATTND_CD',
+                    'first_term_short_des':'FIRST_TERM_ATTND_SHORT_DES',
+                    'last_term_short_des':'LAST_TERM_ATTND_SHORT_DES',
                     'major':'UM_DGR_1_MAJOR_1_DES',
                     'hsgpa':'HS_GPA'}
 
@@ -247,11 +280,13 @@ def rename_columns(df_students,df_courses,df_majors):
                     'name':'CRSE_ID_CD',
                     'credits':'UNITS_ERND_NBR',
                     'student_id':'STDNT_ID',
-                    'term':'TERM_CD'}
+                    'term':'TERM_CD',
+                    'term_short_des':'TERM_SHORT_DES'}
 
     majors_dict = {'major':'UM_DGR_1_MAJOR_1_DES',
                    'student_id':'STDNT_ID',
-                   'term':'TERM_CD'}
+                   'term':'TERM_CD',
+                   'term_short_des':'TERM_SHORT_DES'}
 
 
     #rename the columns
